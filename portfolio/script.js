@@ -48,7 +48,9 @@ function positionLabels(rotation) {
 
     labels.forEach((label, index) => {
         const angle = labelPositions[index] + rotation;
-        const currentRadius = calculateRepulsion(angle);
+        
+        // Use simple radius on mobile, repulsion on desktop
+        const currentRadius = isMobile() ? baseRadius : calculateRepulsion(angle);
         
         const x = cachedCenterX + currentRadius * Math.cos(angle);
         const y = cachedCenterY + currentRadius * Math.sin(angle);
