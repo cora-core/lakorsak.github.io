@@ -10,6 +10,11 @@ const repulsionRadius = 200; // SVG radius to stay away from
 const repulsionStrength = 30; // How far labels push away when close
 let startTime = Date.now();
 
+// Cache layout measurements
+let cachedCenterX = 0;
+let cachedCenterY = 0;
+let needsRecalc = true;
+
 // Initial positions for labels (in radians)
 const labelPositions = [
     0,          // composição (top)
@@ -28,23 +33,28 @@ function calculateRepulsion(angle) {
     return baseRadius + repulsion;
 }
 
-function positionLabels(rotation) {
+function updateCachedLayout() {
     const wrapperRect = diagramWrapper.getBoundingClientRect();
-    const centerX = wrapperRect.width / 2;
-    const centerY = wrapperRect.height / 2;
+    cachedCenterX = wrapperRect.width / 2;
+    cachedCenterY = wrapperRect.height / 2;
+    needsRecalc = false;
+}
+
+function positionLabels(rotation) {
+    // Only recalculate layout if needed
+    if (needsRecalc) {
+        updateCachedLayout();
+    }
 
     labels.forEach((label, index) => {
         const angle = labelPositions[index] + rotation;
         const currentRadius = calculateRepulsion(angle);
         
-        const x = centerX + currentRadius * Math.cos(angle);
-        const y = centerY + currentRadius * Math.sin(angle);
+        const x = cachedCenterX + currentRadius * Math.cos(angle);
+        const y = cachedCenterY + currentRadius * Math.sin(angle);
         
         label.style.left = `${x}px`;
         label.style.top = `${y}px`;
-        
-        // Smooth transition for repulsion
-        label.style.transition = 'all 0.3s ease-out';
     });
 }
 
@@ -72,14 +82,14 @@ async function initWobble() {
     turbulence.setAttribute('id', 'wobble-turbulence');
     turbulence.setAttribute('type', 'fractalNoise');
     turbulence.setAttribute('baseFrequency', '0.0008');
-    turbulence.setAttribute('numOctaves', '2');
+    turbulence.setAttribute('numOctaves', '100');
     turbulence.setAttribute('seed', '0');
 
     // Create displacement map
     const displacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
     displacementMap.setAttribute('in', 'SourceGraphic');
     displacementMap.setAttribute('in2', 'turbulence');
-    displacementMap.setAttribute('scale', '1');
+    displacementMap.setAttribute('scale', '3');
     displacementMap.setAttribute('xChannelSelector', 'R');
     displacementMap.setAttribute('yChannelSelector', 'G');
 
@@ -111,15 +121,32 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// Debounce resize events
+let resizeTimer;
+function handleResize() {
+    needsRecalc = true;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        updateCachedLayout();
+    }, 150);
+}
+
 // Start animation when page is ready
 window.addEventListener('load', async () => {
-    // First initialize the wobble effect
+    // Initialize cached layout
+    updateCachedLayout();
+    
+    // Remove the transition style that was being set every frame
+    labels.forEach(label => {
+        label.style.transition = 'all 0.3s ease-out';
+    });
+    
+    // Initialize wobble effect
     await initWobble();
-    // Then start the animation
+    
+    // Start animation
     animate();
 });
 
 // Re-calculate positions on window resize
-window.addEventListener('resize', () => {
-    // Animation continues automatically with updated positions
-});
+window.addEventListener('resize', handleResize);
