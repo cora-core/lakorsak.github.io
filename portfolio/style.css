@@ -165,6 +165,7 @@ h2 {
 h2::after {
     content: 'λ';
     font-size: 1.5rem;
+    opacity: 0.6;
     transition: transform 0.7s ease;
     
 }
@@ -234,7 +235,7 @@ li {
     display: inline-block;
     margin-left: 4px;
     font-size: 0.9em;
-    opacity: 0.8;
+    opacity: 0.4;
 }
 
 .external-link {
