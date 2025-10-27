@@ -84,6 +84,12 @@ h1 {
   animation: pulse 10s ease-in-out infinite;
 }
 
+
+.circular-fade-edges {
+  mask-image: radial-gradient(circle, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(circle, black 50%, transparent 90%);
+}
+
 @keyframes pulse {
   0%, 100% {
     height: 0.01rem;
