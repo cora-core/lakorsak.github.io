@@ -118,6 +118,23 @@ h1 {
     margin: 0 auto;
 }
 
+.profile-wrapper {
+    position: relative;
+    width: 20em;
+    max-width: 20em;
+    height: 20em;
+    margin: 2em auto;
+}
+
+.profile-image {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    position: relative;
+}
+
+
 .dots-diagram {
     display: block;
     width: 100%;
