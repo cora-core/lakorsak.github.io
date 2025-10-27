@@ -58,8 +58,19 @@ function positionLabels(rotation) {
     });
 }
 
-// Initialize wobble effect
+// Detect if device is mobile
+function isMobile() {
+    return window.innerWidth <= 932 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Initialize wobble effect (desktop only)
 async function initWobble() {
+    // Skip wobble effect on mobile devices
+    if (isMobile()) {
+        console.log('Wobble effect disabled on mobile for performance');
+        return;
+    }
+
     const svgs = document.querySelectorAll('.dots-diagram');
     if (svgs.length === 0) return;
 
@@ -111,11 +122,13 @@ function animate() {
     diagram.style.transform = `rotate(${rotation}rad)`;
     positionLabels(rotation);
 
-    // Animate wobble
-    const turbulence = document.getElementById('wobble-turbulence');
-    if (turbulence) {
-        const seed = Math.sin(elapsed * 0.001) * 1000; // Wobble speed
-        turbulence.setAttribute('seed', seed.toString()); // Wobble speed
+    // Animate wobble (only if not on mobile)
+    if (!isMobile()) {
+        const turbulence = document.getElementById('wobble-turbulence');
+        if (turbulence) {
+            const seed = Math.sin(elapsed * 0.001) * 1000; // Wobble speed
+            turbulence.setAttribute('seed', seed.toString());
+        }
     }
 
     requestAnimationFrame(animate);
