@@ -72,14 +72,14 @@ async function initWobble() {
     turbulence.setAttribute('id', 'wobble-turbulence');
     turbulence.setAttribute('type', 'fractalNoise');
     turbulence.setAttribute('baseFrequency', '0.0008');
-    turbulence.setAttribute('numOctaves', '100');
+    turbulence.setAttribute('numOctaves', '2');
     turbulence.setAttribute('seed', '0');
 
     // Create displacement map
     const displacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
     displacementMap.setAttribute('in', 'SourceGraphic');
     displacementMap.setAttribute('in2', 'turbulence');
-    displacementMap.setAttribute('scale', '3');
+    displacementMap.setAttribute('scale', '1');
     displacementMap.setAttribute('xChannelSelector', 'R');
     displacementMap.setAttribute('yChannelSelector', 'G');
 
